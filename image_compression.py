@@ -6,85 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-# Problem 1
-def compact_svd(A, tol=1e-6):
-    """Compute the truncated SVD of A.
 
-    Parameters:
-        A ((m,n) ndarray): The matrix (of rank r) to factor.
-        tol (float): The tolerance for excluding singular values.
-
-    Returns:
-        ((m,r) ndarray): The orthonormal matrix U in the SVD.
-        ((r,) ndarray): The singular values of A as a 1-D array.
-        ((r,n) ndarray): The orthonormal matrix V^H in the SVD.
-    """
-    eigvalues, V = la.eig(A.conj().T@A)
-    sing = np.argsort(eigvalues)[::-1]
-
-    #sort
-    eigvalues = eigvalues[sing]
-    V = (V.T[sing]).T
-    sing = np.sqrt(eigvalues)
-    r = 0
-    for i in range(len(sing)):
-        if sing[i] != 0:
-            r += 1
-    sing1 = sing[:r]
-    V1 = V[:,:r]
-    U1 = A@V1/sing1
-    return U1, np.real(sing1), V1.conj().T
-    #raise NotImplementedError("Problem 1 Incomplete")
-
-
-# Problem 2
-def visualize_svd(A):
-    """Plot the effect of the SVD of A as a sequence of linear transformations
-    on the unit circle and the two standard basis vectors.
-    """
-    points = np.zeros((2,200))
-    #generating points in an unit circle
-    for i in range(200):
-        points[0,i] = np.cos(np.pi*2/200 * i)
-        points[1,i] = np.sin(np.pi*2/200 * i)
-
-    E = [[1,0,0],[0,0,1]]
-    U, sig, V_h = la.svd(A)
-    ax1 = plt.subplot(2,2,1)
-    ax2 = plt.subplot(2,2,2)
-    ax3 = plt.subplot(2,2,3)
-    ax4 = plt.subplot(2,2,4)
-
-    sig = np.diag(sig)
-    #first plot
-    ax1.plot(points[0], points[1])
-    ax1.plot(E[0], E[1])
-
-    #second Plot
-    VHS = V_h @ points
-    VHE = V_h @ E
-    ax2.plot(VHS[0], VHS[1])
-    ax2.plot(VHE[0], VHE[1])
-
-    #Thrid Plot
-    VHS = sig @ V_h @ points
-    VHE = sig @ V_h @ E
-    ax3.plot(VHS[0], VHS[1])
-    ax3.plot(VHE[0], VHE[1])
-
-    #fourth Plot
-    VHS = U @ sig @ V_h @ points
-    VHE = U @ sig @ V_h @ E
-    ax4.plot(VHS[0], VHS[1])
-    ax4.plot(VHE[0], VHE[1])
-
-    plt.show()
-
-
-    #raise NotImplementedError("Problem 2 Incomplete")
-
-
-# Problem 3
 def svd_approx(A, s):
     """Return the best rank s approximation to A with respect to the 2-norm
     and the Frobenius norm, along with the number of bytes needed to store
@@ -112,10 +34,7 @@ def svd_approx(A, s):
     m_V_h, n_V_h = V1_h.shape
     A_hat = U1 @ sig1 @ V1_h
     return A_hat, (m_U1*s+s+n_V_h*s)
-    #raise NotImplementedError("Problem 3 Incomplete")
 
-
-# Problem 4
 def lowest_rank_approx(A, err):
     """Return the lowest rank approximation of A with error less than 'err'
     with respect to the matrix 2-norm, along with the number of bytes needed
@@ -136,12 +55,11 @@ def lowest_rank_approx(A, err):
         raise ValueError("A cannot be approximated within the tolerance by a matrix of lesser rank.")
     s = np.argmax(sig<err)
     return svd_approx(A,s)
-    #raise NotImplementedError("Problem 4 Incomplete")
 
 from imageio import imread
 from matplotlib import pyplot as plt
 from numpy.linalg import matrix_rank
-# Problem 5
+
 def compress_image(filename, s):
     """Plot the original image found at 'filename' and the rank s approximation
     of the image found at 'filename.' State in the figure title the difference
